@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Sky Blue (80 Item)</title>
+    <style>
+        /* --- TEMA WARNA: SKY BLUE --- */
+        :root {
+            --primary-color: #56CCF2;
+            --primary-dark: #2D9CDB;
+            --bg-color: #F0F9FF;
+            --card-bg: #ffffff;
+            --text-color: #555555;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); }
+        * { box-sizing: border-box; }
+
+        /* HEADER */
+        header { 
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); 
+            color: white; padding: 30px; text-align: center; margin-bottom: 30px; 
+            box-shadow: 0 4px 15px rgba(86, 204, 242, 0.3); 
+        }
+        header h1 { margin: 0; font-size: 28px; font-weight: 700; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        header p { margin: 10px 0 0; font-size: 16px; opacity: 0.95; }
+
+        /* LAYOUT */
+        .main-wrapper {
+            max-width: 1300px; margin: 0 auto; padding: 0 20px; display: flex; gap: 30px; min-height: 80vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 250px; flex-shrink: 0; background: var(--card-bg); padding: 25px;
+            border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); height: fit-content; border: 1px solid #e1f4fc;
+        }
+        .sidebar h3 { margin-top: 0; font-size: 18px; color: var(--primary-dark); border-bottom: 2px solid #e1f4fc; padding-bottom: 10px; }
+        .search-box { 
+            width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #e1f4fc; 
+            border-radius: 8px; font-size: 14px; outline: none; transition: 0.3s;
+        }
+        .search-box:focus { border-color: var(--primary-color); background: #fff; }
+
+        /* PRODUK AREA */
+        .product-area { flex-grow: 1; }
+        .product-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+        }
+
+        /* KARTU PRODUK */
+        .product-card {
+            background: var(--card-bg); border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            overflow: hidden; transition: all 0.3s ease; display: flex; flex-direction: column; border: 1px solid transparent;
+        }
+        .product-card:hover { 
+            transform: translateY(-8px); box-shadow: 0 15px 30px rgba(86, 204, 242, 0.15); border-color: var(--primary-color); 
+        }
+        .product-image { width: 100%; height: 180px; object-fit: cover; background-color: #f4fcff; }
+        .product-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
+        .product-title { font-size: 14px; margin: 0 0 10px; font-weight: 600; line-height: 1.4; color: #444; height: 42px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .product-price { color: var(--primary-dark); font-size: 18px; font-weight: 800; margin-bottom: 15px; }
+        
+        .btn-buy {
+            margin-top: auto; display: block; background-color: var(--primary-color); color: white;
+            text-align: center; padding: 10px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600;
+            transition: background 0.3s; box-shadow: 0 4px 10px rgba(86, 204, 242, 0.4);
+        }
+        .btn-buy:hover { background-color: var(--primary-dark); }
+
+        #no-result { display: none; text-align: center; grid-column: span 4; padding: 40px; color: #999; background: white; border-radius: 15px; }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) { .product-grid { grid-template-columns: repeat(3, 1fr); } #no-result { grid-column: span 3; } }
+        @media (max-width: 768px) { 
+            .main-wrapper { flex-direction: column; } .sidebar { width: 100%; } 
+            .product-grid { grid-template-columns: repeat(2, 1fr); } #no-result { grid-column: span 2; }
+        }
+
+        footer { text-align: center; padding: 30px; color: #888; font-size: 14px; margin-top: 50px; border-top: 1px solid #e1f4fc; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Official Spill Shopee</h1>
+        <p>Belanja Aman & Terpercaya via Shopee</p>
+    </header>
+
+    <div class="main-wrapper">
+        <aside class="sidebar">
+            <h3>Cari Barang</h3>
+            <input type="text" id="searchInput" class="search-box" placeholder="Cari (misal: Tas 78)..." onkeyup="searchProduct()">
+            <div style="font-size: 13px; color: #777;">
+                Tips: Ketik "Baju", "Tas", "Sepatu", atau nomor seri.
+            </div>
+        </aside>
+
+        <main class="product-area">
+            <div class="product-grid" id="productGrid">
+                <div id="no-result">Maaf, produk tidak ditemukan.</div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        &copy; 2024 Cloud Store. Official Partner Shopee.
+    </footer>
+
+    <script>
+        // ==========================================================
+        // DATA PRODUK (GANTI LINK SHOPEE ANDA DI BAWAH INI)
+        // ==========================================================
+        const categories = [
+            { 
+                name: "Kemeja Sky Blue", 
+                img: "https://via.placeholder.com/300/a3e4d7/ffffff?text=Kemeja", 
+                price: 120000,
+                // Masukkan Link Produk Kemeja di bawah ini:
+                link: "https://shopee.co.id/Kemeja-Pria-Casual-i.123456.78910" 
+            },
+            { 
+                name: "Sepatu Sneakers", 
+                img: "https://via.placeholder.com/300/56CCF2/ffffff?text=Sepatu", 
+                price: 175000,
+                // Masukkan Link Produk Sepatu di bawah ini:
+                link: "https://shopee.co.id/Sepatu-Sneakers-Running-i.123456.78911"
+            },
+            { 
+                name: "Tas Selempang", 
+                img: "https://via.placeholder.com/300/85c1e9/ffffff?text=Tas", 
+                price: 85000,
+                // Masukkan Link Produk Tas di bawah ini:
+                link: "https://shopee.co.id/Tas-Selempang-Wanita-i.123456.78912"
+            },
+            { 
+                name: "Topi Baseball", 
+                img: "https://via.placeholder.com/300/d6eaf8/333333?text=Topi", 
+                price: 45000,
+                // Masukkan Link Produk Topi di bawah ini:
+                link: "https://shopee.co.id/Topi-Baseball-Distro-i.123456.78913"
+            },
+            { 
+                name: "Jam Tangan", 
+                img: "https://via.placeholder.com/300/2980b9/ffffff?text=Jam", 
+                price: 250000,
+                // Masukkan Link Produk Jam Tangan di bawah ini:
+                link: "https://shopee.co.id/Jam-Tangan-Digital-i.123456.78914"
+            }
+        ];
+
+        // ==========================================================
+        // FUNGSI GENERATE 80 PRODUK
+        // ==========================================================
+        function generateProducts() {
+            const container = document.getElementById('productGrid');
+            const noResultDiv = document.getElementById('no-result');
+            
+            for (let i = 1; i <= 80; i++) {
+                
+                // Ambil data kategori secara bergantian
+                let cat = categories[i % categories.length]; 
+                
+                let html = `
+                    <div class="product-card">
+                        <img src="${cat.img}" alt="${cat.name}" class="product-image">
+                        <div class="product-info">
+                            <div class="product-title">${cat.name} Series #${i}</div>
+                            <div class="product-price">Rp ${cat.price.toLocaleString('id-ID')}</div>
+                            
+                            <a href="${cat.link}" target="_blank" class="btn-buy">Beli di Shopee</a>
+                            
+                        </div>
+                    </div>
+                `;
+                
+                noResultDiv.insertAdjacentHTML('beforebegin', html);
+            }
+        }
+
+        // FUNGSI PENCARIAN
+        function searchProduct() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('product-card');
+            let hasResult = false;
+
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].querySelector('.product-title').innerText.toLowerCase();
+                if (title.includes(input)) {
+                    cards[i].style.display = "";
+                    hasResult = true;
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+            let noResultMsg = document.getElementById('no-result');
+            noResultMsg.style.display = hasResult ? "none" : "block";
+        }
+
+        generateProducts();
+    </script>
+
+</body>
+</html>
