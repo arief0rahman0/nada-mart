@@ -25,7 +25,12 @@
 
         /* GRID SYSTEM */
         .product-area { flex-grow: 1; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 20px; 
+            align-items: stretch; /* Agar kartu dalam satu baris tingginya sama */
+        }
         
         /* CARD STYLE */
         .card { 
@@ -37,23 +42,33 @@
             transition: 0.3s; 
             border: 1px solid transparent; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.03); 
-            height: 100%; /* Agar tinggi kartu seragam dalam satu baris */
+            height: 100%; /* Penting agar tombol Beli sejajar di bawah */
         }
 
         .img-box { width: 100%; height: 180px; background: #f4fcff; flex-shrink: 0; }
         .img-box img { width: 100%; height: 100%; object-fit: cover; }
         
-        .info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; }
+        .info { 
+            padding: 12px; 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; /* Menyebar konten agar tombol selalu di bawah */
+        }
         
-        /* --- PERUBAHAN UTAMA DI SINI (JUDUL) --- */
+        /* --- PERBAIKAN JUDUL DI SINI --- */
         .title { 
             font-size: 14px; 
             font-weight: 600; 
             margin-bottom: 8px; 
-            line-height: 1.4;
+            line-height: 1.4; /* Jarak antar baris */
             color: #333;
-            /* Kita hapus height:40px agar tulisan tidak terpotong */
-            min-height: 40px; 
+            
+            /* Agar teks panjang turun ke bawah (wrapping) */
+            white-space: normal; 
+            overflow: visible;
+            height: auto; 
+            min-height: 40px; /* Minimal tinggi agar yang judul pendek tetap rapi */
         }
 
         /* LABEL NOMOR URUT */
@@ -69,7 +84,7 @@
         }
 
         .btn { 
-            margin-top: auto; 
+            margin-top: auto; /* Memaksa tombol ke paling bawah */
             display: block; 
             background: var(--primary); 
             color: white; 
@@ -87,7 +102,7 @@
 
         /* --- RESPONSIVE MOBILE (HP) --- */
         @media (max-width: 768px) { 
-            .wrapper { flex-direction: column; padding: 15px; } 
+            .wrapper { flex-direction: column; padding: 10px; } 
             .sidebar { width: 100%; margin-bottom: 20px; } 
             
             /* Grid di HP jadi 2 kolom */
@@ -95,15 +110,14 @@
             #loading, #no-result { grid-column: span 2; }
 
             /* Penyesuaian Kartu di HP */
-            .img-box { height: 150px; } /* Gambar sedikit lebih kecil */
+            .img-box { height: 150px; } 
             .info { padding: 10px; }
             
             .title {
-                font-size: 13px; /* Font judul disesuaikan */
-                /* Memastikan semua teks tampil (tidak ada ... di belakang) */
+                font-size: 13px; 
+                /* Memastikan tidak ada batasan baris di HP */
                 display: block;
-                overflow: visible;
-                height: auto;
+                max-height: none; 
             }
         }
     </style>
@@ -112,14 +126,14 @@
 
     <header>
         <h1>Cloud Store</h1>
-        <p>Katalog Online Terhubung Sheet</p>
+        <p>Katalog Online</p>
     </header>
 
     <div class="wrapper">
         <aside class="sidebar">
             <h3>Cari Produk</h3>
             <input type="text" id="searchInput" class="search-box" placeholder="Ketik nama produk..." onkeyup="searchProduct()">
-            <small style="color:#888">Nomor urut otomatis.</small>
+            <small style="color:#888">Data otomatis dari Sheet.</small>
         </aside>
 
         <main class="product-area">
@@ -132,9 +146,9 @@
 
     <script>
         // =========================================================================
-        // LINK GOOGLE SHEET (CSV)
-        // Ganti dengan link Anda di sini:
-        const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQtoRaaoKCKEq8sjZFCTGjwyokVu_Ce7Ww-HS9xOWEmK0ZYAPU-dIOtZCrGmC6cnhBgNOZ3qEGOL-75/pub?output=csv";
+        // LINK GOOGLE SHEET (CSV) - PASTIKAN LINK INI BENAR
+        // =========================================================================
+        const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQtoRaaoKCKEq8sjZFCTGjwyokVu_Ce7Ww-HS9xOWEmK0ZYAPU-dIOtZCrGmC6cnhBgNOZ3qEGOL-75/pub?output=csv"; 
         // =========================================================================
 
         async function loadProducts() {
@@ -149,13 +163,14 @@
                 loading.style.display = 'none';
 
                 rows.forEach((row, index) => {
+                    // Regex untuk menangani koma dalam tanda kutip CSV
                     const columns = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
                     
                     if (columns && columns.length >= 4) {
-                        let name = columns[0].replace(/^"|"$/g, '');
-                        let img = columns[2].replace(/^"|"$/g, '');
-                        let link = columns[3].replace(/^"|"$/g, '');
-                        let nomorUrut = index + 1;
+                        let name = columns[0].replace(/^"|"$/g, ''); // Nama Produk
+                        let img = columns[2].replace(/^"|"$/g, '');  // Link Gambar
+                        let link = columns[3].replace(/^"|"$/g, ''); // Link Shopee
+                        let nomorUrut = index + 1; // Nomor Item #
 
                         let html = `
                             <div class="card product-card">
